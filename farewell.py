@@ -8,4 +8,4 @@ SCREEN_SIZE = (SCREEN_HEIGHT, SCREEN_WIDTH)
 
 
 if __name__ == "__main__":
-    pass
+    print("farewell")
