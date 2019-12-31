@@ -6,4 +6,4 @@ mccabe==0.6.1
 pylint==2.4.4
 six==1.13.0
 wrapt==1.11.2
-pygame
+pygame==1.9.5
