@@ -10,6 +10,8 @@ from time import sleep
 import sys
 
 src_dir = "src"
+frame_rate = 60
+speed_unit = 60 / frame_rate
 
 
 class Stage(Enum):
@@ -50,8 +52,8 @@ class Snowflake:
     def __init__(self):
         self.x = random.randrange(0, SCREEN_SIZE[0])
         self.y = random.randrange(0, SCREEN_SIZE[1])
-        self.sx = random.randint(-1, 1)  # x speed
-        self.sy = random.randint(2, 4)  # y speed
+        self.sx = random.uniform(-1 * speed_unit, 1 * speed_unit)  # x speed
+        self.sy = random.uniform(2 * speed_unit, 4 * speed_unit)  # y speed
         self.r = random.randint(1, 4)
 
     def fly(self):
@@ -69,22 +71,25 @@ class SnowflakeBackground:
     def update(self):
         for snowflake in self.snowflake_list:
             snowflake.fly()
-            pygame.draw.circle(screen, (255, 255, 255), (snowflake.x, snowflake.y), snowflake.r)
+            pygame.draw.circle(screen, (255, 255, 255), (round(snowflake.x), round(snowflake.y)), snowflake.r)
 
 
 class Poem:
     def __init__(self, filename: str, font: str, font_size: int, bold: bool, line_space_coefficient: float,
-                 color: Tuple[int, int, int] = (0, 0, 0), speed: float = 2.0, boundary_left: int = 0,
+                 color: Tuple[int, int, int] = (0, 0, 0), speed: float = 2.0, stay_time: float = 10.0,
+                 speed_change_rate: float = 1.0,
+                 boundary_left: int = 0,
                  boundary_right: int = SCREEN_WIDTH):
         self.font_size = font_size
         self.font_over = pygame.font.Font(font, font_size)
         self.font_over.set_bold(bold)
         self.line_space = font_size * line_space_coefficient
         self.start_pixel = SCREEN_HEIGHT
-        self.fall_speed = speed
+        self.fall_speed = speed * speed_unit
+        self.speed_change_rate = speed_change_rate
         self.max_width = 0  # find the longest text width within a poem
         self.stage = Stage.INITIALIZING
-        self.staying_time = 60 * 10
+        self.staying_time = frame_rate * stay_time
         self.boundary_left = boundary_left
         self.boundary_right = boundary_right
         self.section_width = self.boundary_right - self.boundary_left
@@ -109,7 +114,7 @@ class Poem:
         if self.stage == Stage.REINITIALIZING:
             for lyric in self.lyrics:
                 lyric.y = self.start_pixel + lyric.rank * self.line_space
-            self.staying_time = 60 * 10
+            self.staying_time = frame_rate * 10
             self.stage = Stage.ENTERING
         elif self.stage == Stage.ENTERING or self.stage == Stage.LEAVING:
             for lyric in self.lyrics:
@@ -148,7 +153,7 @@ class Poem:
                 # when last row appears on the screen change to staying stage
                 elif self.poem.stage == Stage.ENTERING and self.y < SCREEN_HEIGHT - self.poem.hanging_height:
                     self.poem.stage = Stage.STAYING
-                    self.poem.fall_speed *= 0.7
+                    self.poem.fall_speed *= self.poem.speed_change_rate
 
         def show(self):
             screen.blit(self.rendered, (self.poem.start_align, self.y))
@@ -160,14 +165,17 @@ if __name__ == "__main__":
     # phase = Section.PROLOGUE
     clock = pygame.time.Clock()
     snowflake_background = SnowflakeBackground(250)
-    chinese_poem = Poem(path.join(src_dir, "诗词.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28, False, 1, speed=1.5,
-                        boundary_left=SCREEN_WIDTH * 0.6)
-    english_poem = Poem(path.join(src_dir, "lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24, False, 1.2, speed=1.5,
-                        boundary_left=SCREEN_WIDTH * 0.6)
+    chinese_poem = Poem(path.join(src_dir, "诗词.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28, False, 1, speed=1.2,
+                        speed_change_rate=0.7,
+                        stay_time=12, boundary_left=SCREEN_WIDTH * 0.6)
+    english_poem = Poem(path.join(src_dir, "lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24, False, 1.2, speed=1.2,
+                        speed_change_rate=0.7,
+                        stay_time=8, boundary_left=SCREEN_WIDTH * 0.6)
     ack = Poem(path.join(src_dir, "author.txt"), path.join(src_dir, "XinYeYingTi.otf"), 66, False, 1,
-               color=(255, 255, 255), speed=2)
-    code = Poem("farewell.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1,
-                color=(255, 255, 255), speed=16)
+               speed_change_rate=1.0,
+               stay_time=0, color=(255, 255, 255), speed=4)
+    code = Poem("farewell.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1, speed_change_rate=1.0,
+                stay_time=0, color=(255, 255, 255), speed=8)
     finale_background = pygame.Surface(SCREEN_SIZE)
     finale_background.fill((0, 0, 0))
     with BackgroundMusic(path.join(src_dir, "卷珠帘琵琶吉他.mp3"), loop=1, forever=False):
@@ -210,7 +218,7 @@ if __name__ == "__main__":
                                 ((SCREEN_WIDTH - score_text_length) / 2, SCREEN_HEIGHT / 2 - 0.5 * font_size))
 
             pygame.display.flip()
-            clock.tick(60)
+            clock.tick(frame_rate)
 
         # sleep(3)
         # pygame.quit()
