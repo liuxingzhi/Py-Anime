@@ -79,7 +79,7 @@ class Poem:
                  color: Tuple[int, int, int] = (0, 0, 0), speed: float = 2.0, stay_time: float = 10.0,
                  speed_change_rate: float = 1.0,
                  boundary_left: int = 0,
-                 boundary_right: int = SCREEN_WIDTH, hanging_height = -1):
+                 boundary_right: int = SCREEN_WIDTH, hanging_height=-1):
         self.font_size = font_size
         self.font_over = pygame.font.Font(font, font_size)
         self.font_over.set_bold(bold)
@@ -94,7 +94,7 @@ class Poem:
         self.boundary_right = boundary_right
         self.section_width = self.boundary_right - self.boundary_left
         self.leaving_threshold = - 0.2 * SCREEN_HEIGHT
-        with open(filename) as f:
+        with open(filename, "r", encoding="utf-8") as f:
             self.lyrics = [self.PoemRow(line, index, self, color) for index, line in enumerate(f.readlines(), start=1)]
         self.lines_count = len(self.lyrics)
 
@@ -168,16 +168,16 @@ if __name__ == "__main__":
     # phase = Section.PROLOGUE
     clock = pygame.time.Clock()
     snowflake_background = SnowflakeBackground(250)
-    chinese_poem = Poem(path.join(src_dir, "诗词.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28, False, 1, speed=1.2,
+    chinese_poem = Poem(path.join(src_dir, "十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28, False, 1, speed=1.2,
                         speed_change_rate=0.7,
                         stay_time=12, boundary_left=SCREEN_WIDTH * 0.6)
-    english_poem = Poem(path.join(src_dir, "lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24, False, 1.2, speed=1.2,
+    english_poem = Poem(path.join(src_dir, "eighteen-years-lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24, False, 1.2, speed=1.2,
                         speed_change_rate=0.7,
                         stay_time=8, boundary_left=SCREEN_WIDTH * 0.6)
     ack = Poem(path.join(src_dir, "author十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 66, False, 1,
                speed_change_rate=1.0,
                stay_time=0, color=(255, 255, 255), speed=4)
-    code = Poem("farewell.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1, speed_change_rate=1.0,
+    code = Poem("eighteenYears.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1, speed_change_rate=1.0,
                 stay_time=0, color=(255, 255, 255), speed=8)
     finale_background = pygame.Surface(SCREEN_SIZE)
     finale_background.fill((0, 0, 0))

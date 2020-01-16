@@ -1,12 +1,4 @@
-astroid==2.3.3
-colorama==0.4.3
-isort==4.3.21
-lazy-object-proxy==1.4.3
-mccabe==0.6.1
+ffmpeg==1.4
 pydub==0.23.1
 pygame==1.9.5
-pylint==2.4.4
-pytube==9.5.3
-six==1.13.0
-typed-ast==1.4.0
-wrapt==1.11.2
+simpleaudio==1.0.4
