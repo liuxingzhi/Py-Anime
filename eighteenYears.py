@@ -34,8 +34,11 @@ class Section(Enum):
 # SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 pygame.init()
-screen = pygame.display.set_mode()
-pygame.display.toggle_fullscreen()
+# screen = pygame.display.set_mode((200, 300), pygame.RESIZABLE)
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+fullscreen = True
+# pygame.display.toggle_fullscreen()
+
 SCREEN_WIDTH, SCREEN_HEIGHT = pygame.display.get_surface().get_size()
 SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
@@ -171,7 +174,8 @@ if __name__ == "__main__":
     chinese_poem = Poem(path.join(src_dir, "十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28, False, 1, speed=1.2,
                         speed_change_rate=0.7,
                         stay_time=12, boundary_left=SCREEN_WIDTH * 0.6)
-    english_poem = Poem(path.join(src_dir, "eighteen-years-lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24, False, 1.2, speed=1.2,
+    english_poem = Poem(path.join(src_dir, "eighteen-years-lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24, False,
+                        1.2, speed=1.2,
                         speed_change_rate=0.7,
                         stay_time=8, boundary_left=SCREEN_WIDTH * 0.6)
     ack = Poem(path.join(src_dir, "author十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 66, False, 1,
@@ -190,9 +194,21 @@ if __name__ == "__main__":
                         # pygame.quit()
                         os.kill(os.getpid(), signal.SIGKILL)
                         exit(0)
-                    if event.key == pygame.K_r:
+                    elif event.key == pygame.K_r:
                         chinese_poem.stage = Stage.REINITIALIZING
                         english_poem.stage = Stage.REINITIALIZING
+                    elif event.key == pygame.K_F11:
+                        if fullscreen:
+                            pygame.display.quit()
+                            pygame.display.init()
+                            screen = pygame.display.set_mode(SCREEN_SIZE)
+                            fullscreen = False
+                        else:
+                            pygame.display.quit()
+                            pygame.display.init()
+                            screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+                            # pygame.display.toggle_fullscreen()
+                            fullscreen = True
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     os.kill(os.getpid(), signal.SIGKILL)
