@@ -46,7 +46,8 @@ class Poem:
                  speed_change_rate: float = 1.0,
                  hanging_height: int = -1,
                  boundary_left: int = 0,
-                 boundary_right: int = SCREEN_WIDTH):
+                 boundary_right: int = SCREEN_WIDTH,
+                 align="dynamic-right"):
         self.font_size = font_size
         self.font_over = pygame.font.Font(font, font_size)
         self.font_over.set_bold(bold)
@@ -67,7 +68,14 @@ class Poem:
 
         right_align_start = self.boundary_right - self.max_width - self.line_space
         center_align_start = self.boundary_left + (self.section_width - self.max_width) / 2
-        self.start_align = right_align_start if right_align_start < center_align_start else center_align_start
+        if align == "center":
+            self.start_align = center_align_start
+        elif align == "right":
+            self.start_align = right_align_start
+        elif align == "left":
+            self.start_align = 0
+        elif align == "dynamic-right":
+            self.start_align = right_align_start if right_align_start < center_align_start else center_align_start
 
         self.section_height = (self.lines_count - 1) * self.line_space + self.font_size
         if hanging_height == -1:
@@ -142,7 +150,7 @@ if __name__ == '__main__':
                speed_change_rate=1.0,
                stay_time=0, color=(255, 255, 255), speed=4)
     code = Poem("清风歌.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1, speed_change_rate=1.0,
-                stay_time=0, color=(255, 255, 255), speed=6)
+                stay_time=0, color=(255, 255, 255), speed=6, align="left")
     finale_background = pygame.Surface(SCREEN_SIZE)
     finale_background.fill((0, 0, 0))
     with BackgroundMusic(path.join(src_dir, "沧海一声笑剪辑后.mp3"), loop=1, forever=False):
