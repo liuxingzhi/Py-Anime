@@ -62,7 +62,7 @@ class Poem:
         self.boundary_right = boundary_right
         self.section_width = self.boundary_right - self.boundary_left
         self.leaving_threshold = - 0.2 * SCREEN_HEIGHT
-        with open(filename) as f:
+        with open(filename, "r", encoding="utf-8") as f:
             self.lyrics = [self.PoemRow(line, index, self, color) for index, line in enumerate(f.readlines(), start=1)]
         self.lines_count = len(self.lyrics)
 
@@ -157,7 +157,7 @@ if __name__ == '__main__':
     finale_background = pygame.Surface(SCREEN_SIZE)
     finale_background.fill((0, 0, 0))
     with BackgroundMusic(path.join(src_dir, "沧海一声笑剪辑后.mp3"), loop=1, forever=False):
-        phase = Section.EPILOGUE
+        phase = Section.BODY
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
