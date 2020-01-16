@@ -111,14 +111,17 @@ class Poem:
 
         right_align_start = self.boundary_right - self.max_width - self.line_space
         center_align_start = self.boundary_left + (self.section_width - self.max_width) / 2
+        left_align_start = font_size
         if align == "center":
             self.start_align = center_align_start
         elif align == "right":
             self.start_align = right_align_start
         elif align == "left":
-            self.start_align = 0
+            self.start_align = left_align_start
         elif align == "center-fit-right":
             self.start_align = right_align_start if right_align_start < center_align_start else center_align_start
+        elif align == "center-fit-left":
+            self.start_align = center_align_start if center_align_start > left_align_start else left_align_start
 
         self.section_height = (self.lines_count - 1) * self.line_space + self.font_size
         if hanging_height == -1:
