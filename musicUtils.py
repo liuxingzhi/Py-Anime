@@ -26,8 +26,7 @@ class BackgroundMusic:
         self.song_name = song_name
         self.music = AudioSegment.from_file(song_name)
         self.thread = LoopMusic(self.music, loop=loop, interval=interval, forever=forever)
-        self.daemon = forever
-        self.thread.setDaemon(self.daemon)
+        self.thread.setDaemon(True)
 
     def run(self):
         self.thread.start()
@@ -36,5 +35,4 @@ class BackgroundMusic:
         self.run()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if not self.daemon:
-            self.thread.join()
+        pass

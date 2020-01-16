@@ -5,6 +5,7 @@ from os import path
 import pygame
 from typing import Tuple, List
 from enum import Enum
+import platform
 
 src_dir = "src"
 frame_rate = 60
@@ -143,14 +144,14 @@ if __name__ == '__main__':
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                         # pygame.quit()
-                        os.kill(os.getpid(), signal.SIGKILL)
+                        # os.kill(os.getpid(), signal.SIGKILL)
                         exit(0)
                     if event.key == pygame.K_r:
                         chinese_poem.stage = Stage.REINITIALIZING
                         # english_poem.stage = Stage.REINITIALIZING
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    os.kill(os.getpid(), signal.SIGKILL)
+                    # os.kill(os.getpid(), signal.SIGKILL)
                     exit(0)
             # TODO show background
             if phase == Section.BODY:

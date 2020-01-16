@@ -8,11 +8,13 @@ import signal
 from os import path
 from time import sleep
 import sys
+from threading import Event
+import platform
 
 src_dir = "src"
 frame_rate = 60
 speed_unit = 60 / frame_rate
-
+exit_event = Event()
 
 class Stage(Enum):
     INITIALIZING = 0
@@ -33,10 +35,15 @@ class Section(Enum):
 # SCREEN_HEIGHT = 1080
 # SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
+fullscreen = False
 pygame.init()
-# screen = pygame.display.set_mode((200, 300), pygame.RESIZABLE)
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-fullscreen = True
+if platform.system() == "Windows":
+    screen = pygame.display.set_mode((192 * 7, 1080 * 6), pygame.RESIZABLE)
+elif platform.system() == "Linux":
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    fullscreen = True
+
+
 # pygame.display.toggle_fullscreen()
 
 SCREEN_WIDTH, SCREEN_HEIGHT = pygame.display.get_surface().get_size()
@@ -191,27 +198,27 @@ if __name__ == "__main__":
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
-                        # pygame.quit()
-                        os.kill(os.getpid(), signal.SIGKILL)
+                        pygame.quit()
+                        # os.kill(os.getpid(), signal.SIGINT)
                         exit(0)
                     elif event.key == pygame.K_r:
                         chinese_poem.stage = Stage.REINITIALIZING
                         english_poem.stage = Stage.REINITIALIZING
                     elif event.key == pygame.K_F11:
                         if fullscreen:
-                            pygame.display.quit()
-                            pygame.display.init()
+                            # pygame.display.quit()
+                            # pygame.display.init()
                             screen = pygame.display.set_mode(SCREEN_SIZE)
                             fullscreen = False
                         else:
-                            pygame.display.quit()
-                            pygame.display.init()
+                            # pygame.display.quit()
+                            # pygame.display.init()
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                             # pygame.display.toggle_fullscreen()
                             fullscreen = True
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    os.kill(os.getpid(), signal.SIGKILL)
+                    # os.kill(os.getpid(), signal.SIGINT)
                     exit(0)
             # TODO show background
             if phase == Section.BODY:
