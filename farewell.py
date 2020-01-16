@@ -79,7 +79,7 @@ class Poem:
                  color: Tuple[int, int, int] = (0, 0, 0), speed: float = 2.0, stay_time: float = 10.0,
                  speed_change_rate: float = 1.0,
                  boundary_left: int = 0,
-                 boundary_right: int = SCREEN_WIDTH):
+                 boundary_right: int = SCREEN_WIDTH, hanging_height = -1):
         self.font_size = font_size
         self.font_over = pygame.font.Font(font, font_size)
         self.font_over.set_bold(bold)
@@ -103,10 +103,13 @@ class Poem:
         self.start_align = right_align_start if right_align_start < center_align_start else center_align_start
 
         self.section_height = (self.lines_count - 1) * self.line_space + self.font_size
-        if self.section_height > SCREEN_HEIGHT:
-            self.hanging_height = self.line_space
+        if hanging_height == -1:
+            if self.section_height > SCREEN_HEIGHT:
+                self.hanging_height = self.line_space
+            else:
+                self.hanging_height = (SCREEN_HEIGHT - self.section_height) / 2 + self.font_size
         else:
-            self.hanging_height = (SCREEN_HEIGHT - self.section_height) / 2 + self.font_size
+            self.hanging_height = hanging_height
 
         self.stage = Stage.ENTERING
 
@@ -136,7 +139,7 @@ class Poem:
             self.content = line
             self.rank = index  # start from 1
             self.y = self.poem.start_pixel + self.rank * self.poem.line_space
-            self.rendered = self.poem.font_over.render(self.content.strip(), True, self.color)
+            self.rendered = self.poem.font_over.render(self.content.replace("\n", ""), True, self.color)
             if self.rendered.get_width() > self.poem.max_width:
                 self.poem.max_width = self.rendered.get_width()
 
@@ -171,7 +174,7 @@ if __name__ == "__main__":
     english_poem = Poem(path.join(src_dir, "lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24, False, 1.2, speed=1.2,
                         speed_change_rate=0.7,
                         stay_time=8, boundary_left=SCREEN_WIDTH * 0.6)
-    ack = Poem(path.join(src_dir, "author.txt"), path.join(src_dir, "XinYeYingTi.otf"), 66, False, 1,
+    ack = Poem(path.join(src_dir, "author十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 66, False, 1,
                speed_change_rate=1.0,
                stay_time=0, color=(255, 255, 255), speed=4)
     code = Poem("farewell.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1, speed_change_rate=1.0,
@@ -186,12 +189,14 @@ if __name__ == "__main__":
                     if event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
                         # pygame.quit()
                         os.kill(os.getpid(), signal.SIGKILL)
+                        exit(0)
                     if event.key == pygame.K_r:
                         chinese_poem.stage = Stage.REINITIALIZING
                         english_poem.stage = Stage.REINITIALIZING
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     os.kill(os.getpid(), signal.SIGKILL)
+                    exit(0)
             # TODO show background
             if phase == Section.BODY:
                 screen.blit(background, (0, 0))
