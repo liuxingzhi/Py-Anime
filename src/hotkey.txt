@@ -1,8 +1,10 @@
 Hotkey:
-'+'    speed up the snow;
-'-'    slow down the snow;
-'r'    refresh the poetry;
-'p'    pause the poetry
-'s'    stop snow
-'q'    quit
-'F11'  full screen
+'+'     speed up the snow;
+'-'     slow down the snow;
+'r'     refresh the poetry;
+'p'     pause the poetry
+'s'     stop snow
+'q'     quit
+'F11'   full screen
+'UP'    speed up poetry
+'DOWN'  speed up poetry
