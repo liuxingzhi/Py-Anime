@@ -114,13 +114,15 @@ class SnowflakeBackground:
 
 
 class Poem:
-    def __init__(self, filename: str, font: str, font_size: int, bold: bool, line_space_coefficient: float,
+    def __init__(self, filename: str, font_src: str, font_size: int,
+                 line_space_coefficient: float = 1.0,
+                 bold: bool = False,
                  color: Tuple[int, int, int] = (0, 0, 0), speed: float = 2.0, stay_time: float = 10.0,
                  speed_change_rate: float = 1.0,
                  boundary_left: int = 0,
                  boundary_right: int = SCREEN_WIDTH, hanging_height=-1, align="center-fit-right"):
         self.font_size = font_size
-        self.font_over = pygame.font.Font(font, font_size)
+        self.font_over = pygame.font.Font(font_src, font_size)
         self.font_over.set_bold(bold)
         self.line_space = font_size * line_space_coefficient
         self.start_pixel = SCREEN_HEIGHT
@@ -161,6 +163,7 @@ class Poem:
         else:
             self.hanging_height = hanging_height
 
+        self.freeze = False
         self.stage = Stage.ENTERING
 
     def update(self):
@@ -171,7 +174,8 @@ class Poem:
             self.stage = Stage.ENTERING
         elif self.stage == Stage.ENTERING or self.stage == Stage.LEAVING:
             for lyric in self.lyrics:
-                lyric.move()
+                if not self.freeze:
+                    lyric.move()
                 lyric.show()
         elif self.stage == Stage.STAYING:
             for lyric in self.lyrics:
@@ -217,22 +221,29 @@ background = pygame.transform.scale(pygame.image.load(path.join(src_dir, 'bg.jpg
 if __name__ == "__main__":
     # phase = Section.PROLOGUE
     clock = pygame.time.Clock()
-    snowflake_background = SnowflakeBackground(10)
-    chinese_poem = Poem(path.join(src_dir, "十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28, False, 1, speed=1.2,
+    snowflake_background = SnowflakeBackground(0)
+    chinese_poem = Poem(path.join(src_dir, "十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28,
+                        line_space_coefficient=1, speed=1.2,
                         speed_change_rate=0.7,
                         stay_time=12, boundary_left=SCREEN_WIDTH * 0.6)
-    english_poem = Poem(path.join(src_dir, "eighteen-years-lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24, False,
-                        1.2, speed=1.2,
+    english_poem = Poem(path.join(src_dir, "eighteen-years-lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24,
+                        line_space_coefficient=1.2, speed=1.2,
                         speed_change_rate=0.7,
                         stay_time=8, boundary_left=SCREEN_WIDTH * 0.6)
-    ack = Poem(path.join(src_dir, "author十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 66, False, 1,
+    ack = Poem(path.join(src_dir, "author十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 66, line_space_coefficient=1,
                speed_change_rate=1.0,
-               stay_time=0, color=(255, 255, 255), speed=4)
-    code = Poem("eighteenYears.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1, speed_change_rate=1.0,
+               stay_time=0, color=(0, 0, 0), speed=4, align="center-fit-right", boundary_left=SCREEN_WIDTH * 0.6)
+    hotkey = Poem(path.join(src_dir, "hotkey.txt"), path.join(src_dir, "Courier_New_Bold.ttf"), 48,
+                  line_space_coefficient=1.2,
+                  speed_change_rate=1.0,
+                  stay_time=0, color=(255, 255, 255), speed=4)
+    code = Poem("eighteenYears.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, line_space_coefficient=1,
+                speed_change_rate=1.0,
                 stay_time=0, color=(255, 255, 255), speed=8, align="left")
     finale_background = pygame.Surface(SCREEN_SIZE)
     finale_background.fill((0, 0, 0))
     current_captions = chinese_poem
+    text_paused = False
     with BackgroundMusic(path.join(src_dir, "卷珠帘琵琶吉他.mp3"), loop=1, forever=False):
         phase = Section.BODY
         while True:
@@ -260,8 +271,10 @@ if __name__ == "__main__":
                         snowflake_background.increase_snowflakes()
                     elif event.key == pygame.K_MINUS:
                         snowflake_background.decrease_snowflakes()
-                    elif event.key == pygame.K_p:
+                    elif event.key == pygame.K_s:
                         snowflake_background.switch_visibility()
+                    elif event.key == pygame.K_p:
+                        current_captions.freeze = not current_captions.freeze
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     # os.kill(os.getpid(), signal.SIGINT)
@@ -275,14 +288,18 @@ if __name__ == "__main__":
                 elif english_poem.stage != Stage.COMPLETED:
                     current_captions = english_poem
                     english_poem.update()
+                elif ack.stage != Stage.COMPLETED:
+                    current_captions = ack
+                    ack.update()
                 else:
                     phase = Section.EPILOGUE
 
             elif phase == Section.EPILOGUE:
                 screen.blit(finale_background, (0, 0))
-                if ack.stage != Stage.COMPLETED:
-                    current_captions = ack
-                    ack.update()
+                if hotkey.stage != Stage.COMPLETED:
+                    current_captions = hotkey
+                    hotkey.update()
+
                 elif code.stage != Stage.COMPLETED:
                     current_captions = code
                     code.update()
