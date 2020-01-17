@@ -130,6 +130,8 @@ class Poem:
         self.line_space = font_size * line_space_coefficient
         self.start_pixel = SCREEN_HEIGHT
         self.fall_speed = speed * speed_unit
+        self.max_speed = 32
+        self.min_speed = 0.5
         self.speed_change_rate = speed_change_rate
         self.max_width = 0  # find the longest text width within a poem
         self.stage = Stage.INITIALIZING
@@ -168,6 +170,18 @@ class Poem:
 
         self.freeze = False
         self.stage = Stage.ENTERING
+
+    def increase_speed(self, coefficient=1.25):
+        new_speed = self.fall_speed * coefficient
+        if new_speed < self.max_speed:
+            self.fall_speed = new_speed
+
+    def decrease_speed(self, coefficient=1.25):
+        new_speed = self.fall_speed / coefficient
+        if new_speed > self.min_speed:
+            self.fall_speed = new_speed
+
+        print("after", self.fall_speed, "===")
 
     def update(self):
         if self.stage == Stage.REINITIALIZING:
@@ -278,6 +292,10 @@ if __name__ == "__main__":
                         snowflake_background.switch_visibility()
                     elif event.key == pygame.K_p:
                         current_captions.freeze = not current_captions.freeze
+                    elif event.key == pygame.K_UP:
+                        current_captions.increase_speed()
+                    elif event.key == pygame.K_DOWN:
+                        current_captions.decrease_speed()
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     # os.kill(os.getpid(), signal.SIGINT)
