@@ -38,9 +38,12 @@ class Section(Enum):
 
 fullscreen = False
 pygame.init()
+pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
 screen = None
 if platform.system() == "Windows":
     screen = pygame.display.set_mode((192 * 7, 108 * 7), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    fullscreen = True
 elif platform.system() == "Linux":
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     fullscreen = True
