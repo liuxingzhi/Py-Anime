@@ -60,29 +60,57 @@ SCREEN_SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 # line_space = font_size * 1
 
 class Snowflake:
-    def __init__(self):
+    def __init__(self, collection):
         self.x = random.randrange(0, SCREEN_SIZE[0])
-        self.y = random.randrange(0, SCREEN_SIZE[1])
+        self.y = -0.1 * SCREEN_HEIGHT
         self.sx = random.uniform(-1 * speed_unit, 1 * speed_unit)  # x speed
         self.sy = random.uniform(2 * speed_unit, 4 * speed_unit)  # y speed
         self.r = random.randint(1, 4)
+        self.to_be_deleted = False
+        self.collection = collection
 
     def fly(self):
         self.x += self.sx
         self.y += self.sy
         if self.y > SCREEN_SIZE[1]:
-            self.x = random.randrange(0, SCREEN_SIZE[0])
-            self.y = random.randrange(-50, -10)
+            self.collection.remove(self)
 
 
 class SnowflakeBackground:
-    def __init__(self, snowflake_num: int):
-        self.snowflake_list = [Snowflake() for _ in range(snowflake_num)]
+    def __init__(self, fall_rate: float = 0.5):
+        self.snowflake_collection = set()
+        self.fluctuation = 1
+        self.max_rate = 36
+        self.min_rate = -1.5 * self.fluctuation
+        self.fall_rate = fall_rate if fall_rate < self.max_rate else self.max_rate
+        self.active = True
+
+    def generate_snowflakes(self):
+        new_snows = int(random.normalvariate(self.fall_rate, self.fluctuation))
+        if new_snows <= 0:
+            return
+        for _ in range(new_snows):
+            self.snowflake_collection.add(Snowflake(self.snowflake_collection))
 
     def update(self):
-        for snowflake in self.snowflake_list:
-            snowflake.fly()
-            pygame.draw.circle(screen, (255, 255, 255), (round(snowflake.x), round(snowflake.y)), snowflake.r)
+        # print(len(self.snowflake_collection))
+        if self.active:
+            self.generate_snowflakes()
+            for snowflake in self.snowflake_collection.copy():
+                snowflake.fly()
+                pygame.draw.circle(screen, (255, 255, 255), (round(snowflake.x), round(snowflake.y)), snowflake.r)
+
+    def increase_snowflakes(self, rate: float = 0.5):
+        if self.fall_rate < self.max_rate:
+            self.fall_rate += rate + (self.fall_rate * 0.1)
+
+    def decrease_snowflakes(self, rate: float = 0.5):
+        print(self.fall_rate)
+        if self.fall_rate > self.min_rate:
+            self.fall_rate -= rate + (self.fall_rate * 0.1)
+
+    def switch_visibility(self):
+        self.active = not self.active
 
 
 class Poem:
@@ -100,7 +128,8 @@ class Poem:
         self.speed_change_rate = speed_change_rate
         self.max_width = 0  # find the longest text width within a poem
         self.stage = Stage.INITIALIZING
-        self.staying_time = frame_rate * stay_time
+        self.stay_time = frame_rate * stay_time
+        self.staying_time_left = self.stay_time
         self.boundary_left = boundary_left
         self.boundary_right = boundary_right
         self.section_width = self.boundary_right - self.boundary_left
@@ -138,7 +167,7 @@ class Poem:
         if self.stage == Stage.REINITIALIZING:
             for lyric in self.lyrics:
                 lyric.y = self.start_pixel + lyric.rank * self.line_space
-            self.staying_time = frame_rate * 10
+            self.staying_time_left = self.stay_time
             self.stage = Stage.ENTERING
         elif self.stage == Stage.ENTERING or self.stage == Stage.LEAVING:
             for lyric in self.lyrics:
@@ -147,8 +176,8 @@ class Poem:
         elif self.stage == Stage.STAYING:
             for lyric in self.lyrics:
                 lyric.show()
-            self.staying_time -= 1
-            if self.staying_time <= 0:
+            self.staying_time_left -= 1
+            if self.staying_time_left <= 0:
                 self.stage = Stage.LEAVING
         elif self.stage == Stage.COMPLETED:
             pass
@@ -188,7 +217,7 @@ background = pygame.transform.scale(pygame.image.load(path.join(src_dir, 'bg.jpg
 if __name__ == "__main__":
     # phase = Section.PROLOGUE
     clock = pygame.time.Clock()
-    snowflake_background = SnowflakeBackground(250)
+    snowflake_background = SnowflakeBackground(10)
     chinese_poem = Poem(path.join(src_dir, "十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28, False, 1, speed=1.2,
                         speed_change_rate=0.7,
                         stay_time=12, boundary_left=SCREEN_WIDTH * 0.6)
@@ -203,6 +232,7 @@ if __name__ == "__main__":
                 stay_time=0, color=(255, 255, 255), speed=8, align="left")
     finale_background = pygame.Surface(SCREEN_SIZE)
     finale_background.fill((0, 0, 0))
+    current_captions = chinese_poem
     with BackgroundMusic(path.join(src_dir, "卷珠帘琵琶吉他.mp3"), loop=1, forever=False):
         phase = Section.BODY
         while True:
@@ -213,8 +243,7 @@ if __name__ == "__main__":
                         # os.kill(os.getpid(), signal.SIGINT)
                         exit(0)
                     elif event.key == pygame.K_r:
-                        chinese_poem.stage = Stage.REINITIALIZING
-                        english_poem.stage = Stage.REINITIALIZING
+                        current_captions.stage = Stage.REINITIALIZING
                     elif event.key == pygame.K_F11:
                         if fullscreen:
                             # pygame.display.quit()
@@ -227,6 +256,12 @@ if __name__ == "__main__":
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
                             # pygame.display.toggle_fullscreen()
                             fullscreen = True
+                    elif event.unicode == "+":
+                        snowflake_background.increase_snowflakes()
+                    elif event.key == pygame.K_MINUS:
+                        snowflake_background.decrease_snowflakes()
+                    elif event.key == pygame.K_p:
+                        snowflake_background.switch_visibility()
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     # os.kill(os.getpid(), signal.SIGINT)
@@ -238,6 +273,7 @@ if __name__ == "__main__":
                 if chinese_poem.stage != Stage.COMPLETED:
                     chinese_poem.update()
                 elif english_poem.stage != Stage.COMPLETED:
+                    current_captions = english_poem
                     english_poem.update()
                 else:
                     phase = Section.EPILOGUE
@@ -245,8 +281,10 @@ if __name__ == "__main__":
             elif phase == Section.EPILOGUE:
                 screen.blit(finale_background, (0, 0))
                 if ack.stage != Stage.COMPLETED:
+                    current_captions = ack
                     ack.update()
                 elif code.stage != Stage.COMPLETED:
+                    current_captions = code
                     code.update()
                 else:
                     font_size = 60
