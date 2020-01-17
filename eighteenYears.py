@@ -142,7 +142,7 @@ class Poem:
 
         right_align_start = self.boundary_right - self.max_width - self.line_space
         center_align_start = self.boundary_left + (self.section_width - self.max_width) / 2
-        left_align_start = font_size
+        left_align_start = self.boundary_left
         if align == "center":
             self.start_align = center_align_start
         elif align == "right":
@@ -225,14 +225,14 @@ if __name__ == "__main__":
     chinese_poem = Poem(path.join(src_dir, "十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 28,
                         line_space_coefficient=1, speed=1.2,
                         speed_change_rate=0.7,
-                        stay_time=12, boundary_left=SCREEN_WIDTH * 0.6)
+                        stay_time=0, boundary_left=SCREEN_WIDTH * 0.6)
     english_poem = Poem(path.join(src_dir, "eighteen-years-lyrics.txt"), path.join(src_dir, "my_font.ttf"), 24,
                         line_space_coefficient=1.2, speed=1.2,
                         speed_change_rate=0.7,
-                        stay_time=8, boundary_left=SCREEN_WIDTH * 0.6)
-    ack = Poem(path.join(src_dir, "author十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 66, line_space_coefficient=1,
+                        stay_time=0, boundary_left=SCREEN_WIDTH * 0.6)
+    ack = Poem(path.join(src_dir, "author十八年.txt"), path.join(src_dir, "XinYeYingTi.otf"), 52, line_space_coefficient=1,
                speed_change_rate=1.0,
-               stay_time=0, color=(0, 0, 0), speed=4, align="center-fit-right", boundary_left=SCREEN_WIDTH * 0.6)
+               stay_time=0, color=(0, 0, 0), speed=4, align="center-fit-left", boundary_left=SCREEN_WIDTH * 0.6)
     hotkey = Poem(path.join(src_dir, "hotkey.txt"), path.join(src_dir, "Courier_New_Bold.ttf"), 48,
                   line_space_coefficient=1.2,
                   speed_change_rate=1.0,
@@ -296,13 +296,13 @@ if __name__ == "__main__":
 
             elif phase == Section.EPILOGUE:
                 screen.blit(finale_background, (0, 0))
-                if hotkey.stage != Stage.COMPLETED:
-                    current_captions = hotkey
-                    hotkey.update()
-
-                elif code.stage != Stage.COMPLETED:
+                if code.stage != Stage.COMPLETED:
                     current_captions = code
                     code.update()
+
+                elif hotkey.stage != Stage.COMPLETED:
+                    current_captions = hotkey
+                    hotkey.update()
                 else:
                     font_size = 60
                     font_over = pygame.font.Font(path.join(src_dir, "Calafia-Regular.otf"), 128)
