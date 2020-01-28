@@ -261,7 +261,7 @@ if __name__ == "__main__":
     finale_background.fill((0, 0, 0))
     current_captions = chinese_poem
     text_paused = False
-    with BackgroundMusic(path.join(src_dir, "卷珠帘琵琶吉他.mp3"), loop=1, forever=False):
+    with BackgroundMusic(path.join(src_dir, "卷珠帘琵琶吉他.mp3"), loops=1, forever=False):
         phase = Section.BODY
         while True:
             for event in pygame.event.get():

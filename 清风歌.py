@@ -156,7 +156,7 @@ if __name__ == '__main__':
                 stay_time=0, color=(255, 255, 255), speed=6, align="center-fit-left")
     finale_background = pygame.Surface(SCREEN_SIZE)
     finale_background.fill((0, 0, 0))
-    with BackgroundMusic(path.join(src_dir, "沧海一声笑剪辑后.mp3"), loop=1, forever=False):
+    with BackgroundMusic(path.join(src_dir, "沧海一声笑剪辑后.wav"), loops=1, forever=False):
         phase = Section.BODY
         while True:
             for event in pygame.event.get():
