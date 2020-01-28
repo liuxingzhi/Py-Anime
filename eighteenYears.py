@@ -230,7 +230,7 @@ class Poem:
             screen.blit(self.rendered, (self.poem.start_align, self.y))
 
 
-# TODO add background for screen
+# add background for screen
 background = pygame.transform.scale(pygame.image.load(path.join(src_dir, 'bg.jpg')).convert(), SCREEN_SIZE)
 if __name__ == "__main__":
     # phase = Section.PROLOGUE
@@ -298,7 +298,7 @@ if __name__ == "__main__":
                     pygame.quit()
                     # os.kill(os.getpid(), signal.SIGINT)
                     exit(0)
-            # TODO show background
+            # show background
             if phase == Section.BODY:
                 screen.blit(background, (0, 0))
                 snowflake_background.update()

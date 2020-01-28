@@ -184,7 +184,7 @@ if __name__ == '__main__':
                     pygame.quit()
                     # os.kill(os.getpid(), signal.SIGKILL)
                     exit(0)
-            # TODO show background
+            # show background
             if phase == Section.BODY:
                 screen.blit(background, (0, 0))
                 # snowflake_background.update()
