@@ -10,8 +10,8 @@ base = None
 if sys.platform == "win32":
     base = "Win32GUI"
 
-setup(  name = "guifoo",
+setup(  name = "清风歌",
         version = "0.1",
-        description = "My GUI application!",
-        options = {"build_exe": build_exe_options},
-        executables = [Executable("guifoo.py", base=base)])
+        description = "清风歌",
+        # options = {"build_exe": build_exe_options},
+        executables = [Executable("清风歌.py", base=base)])

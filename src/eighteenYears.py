@@ -1,10 +1,13 @@
 import pygame
 import random
-from typing import Tuple
+from typing import List, Tuple
 from enum import Enum
 from musicUtils import BackgroundMusic
+import os
+import signal
 from os import path
-from sys import exit
+from time import sleep
+import sys
 from threading import Event
 import platform
 
