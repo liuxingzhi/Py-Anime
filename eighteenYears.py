@@ -272,16 +272,13 @@ if __name__ == "__main__":
                         current_captions.stage = Stage.REINITIALIZING
                     elif event.key == pygame.K_F11:
                         if fullscreen:
-                            # pygame.display.quit()
-                            # pygame.display.init()
                             screen = pygame.display.set_mode(SCREEN_SIZE)
                             fullscreen = False
                         else:
-                            # pygame.display.quit()
-                            # pygame.display.init()
                             screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-                            # pygame.display.toggle_fullscreen()
                             fullscreen = True
+
+                    # '+' is different, because it needs both shift key at the same time,
                     elif event.unicode == "+":
                         snowflake_background.increase_snowflakes()
                     elif event.key == pygame.K_MINUS:
