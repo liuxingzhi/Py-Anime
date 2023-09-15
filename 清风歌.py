@@ -151,7 +151,7 @@ if __name__ == '__main__':
                line_space_coefficient=2,
                speed_change_rate=1.0,
                stay_time=0, color=(255, 255, 255), speed=4)
-    code = Poem(path.join(src_dir, "清风歌.py"), path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1,
+    code = Poem("清风歌.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24, False, 1,
                 speed_change_rate=1.0,
                 stay_time=0, color=(255, 255, 255), speed=6, align="center-fit-left")
     finale_background = pygame.Surface(SCREEN_SIZE)

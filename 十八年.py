@@ -251,7 +251,7 @@ if __name__ == "__main__":
                   line_space_coefficient=1.2,
                   speed_change_rate=1.0,
                   stay_time=0, color=(255, 255, 255), speed=4)
-    code = Poem(path.join(src_dir, "eighteenYears.py"), path.join(src_dir, "Courier_New_Bold.ttf"), 24,
+    code = Poem("十八年.py", path.join(src_dir, "Courier_New_Bold.ttf"), 24,
                 line_space_coefficient=1,
                 speed_change_rate=1.0,
                 stay_time=0, color=(255, 255, 255), speed=8, align="left")
@@ -329,7 +329,3 @@ if __name__ == "__main__":
 
             pygame.display.flip()
             clock.tick(frame_rate)
-
-        # sleep(3)
-        # pygame.quit()
-        # exit(0)
